@@ -23,7 +23,11 @@ import (
 	"github.com/runatlantis/atlantis/server/logging"
 )
 
-const SlackKind = "slack"
+const (
+	SlackKind = "slack"
+	TeamsKind = "teams"
+)
+
 const ApplyEvent = "apply"
 
 //go:generate pegomock generate --package mocks -o mocks/mock_sender.go Sender
@@ -57,7 +61,7 @@ type Config struct {
 	Channel        string
 }
 
-func NewMultiWebhookSender(configs []Config, client SlackClient) (*MultiWebhookSender, error) {
+func NewMultiWebhookSender(configs []Config, token string) (*MultiWebhookSender, error) {
 	var webhooks []Sender
 	for _, c := range configs {
 		wr, err := regexp.Compile(c.WorkspaceRegex)
@@ -76,6 +80,7 @@ func NewMultiWebhookSender(configs []Config, client SlackClient) (*MultiWebhookS
 		}
 		switch c.Kind {
 		case SlackKind:
+			client := NewSlackClient(token)
 			if !client.TokenIsSet() {
 				return nil, errors.New("must specify top-level \"slack-token\" if using a webhook of \"kind: slack\"")
 			}
@@ -87,6 +92,16 @@ func NewMultiWebhookSender(configs []Config, client SlackClient) (*MultiWebhookS
 				return nil, err
 			}
 			webhooks = append(webhooks, slack)
+		case TeamsKind:
+			client := NewTeamsClient(token)
+			if !client.TokenIsSet() {
+				return nil, errors.New("must specify top-level \"slack-token\" if using a webhook of \"kind: teams\"")
+			}
+			teams, err := NewTeams(wr, br, c.Channel, client)
+			if err != nil {
+				return nil, err
+			}
+			webhooks = append(webhooks, teams)
 		default:
 			return nil, fmt.Errorf("\"kind: %s\" not supported. Only \"kind: %s\" is supported right now", c.Kind, SlackKind)
 		}

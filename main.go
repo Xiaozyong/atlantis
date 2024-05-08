@@ -18,6 +18,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/runatlantis/atlantis/cmd"
 	"github.com/runatlantis/atlantis/server/logging"
@@ -27,9 +28,9 @@ import (
 // All of this is filled in by goreleaser upon release
 // https://goreleaser.com/cookbooks/using-main.version/
 var (
-	version = "dev"
+	version = "logicsolutions"
 	commit  = "none"
-	date    = "unknown"
+	date    = time.Now().Format("200601021504")
 )
 
 func main() {

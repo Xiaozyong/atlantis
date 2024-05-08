@@ -6,6 +6,7 @@ require (
 	code.gitea.io/sdk/gitea v0.17.1
 	github.com/Masterminds/sprig/v3 v3.2.3
 	github.com/alicebob/miniredis/v2 v2.32.1
+	github.com/atc0005/go-teams-notify/v2 v2.10.0
 	github.com/bradleyfalzon/ghinstallation/v2 v2.10.0
 	github.com/briandowns/spinner v1.23.0
 	github.com/cactus/go-statsd-client/v5 v5.1.0
